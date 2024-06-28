@@ -1,54 +1,36 @@
-// pages/index.tsx
 "use client"
-import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
 
-import Header from "@/components/Header";
-const Hero = dynamic(() => import("@/components/Hero"), { ssr: false });
-const Bottom = dynamic(() => import("@/components/Bottom"), { ssr: false });
+import { useState } from "react"
+import Component from "./file/file"
 
-const Page = () => {
-  const [showHero, setShowHero] = useState(false);
-  const [showBottom, setShowBottom] = useState(false);
+export default function Page() {
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const windowHeight = window.innerHeight;
-      const scrollY = window.scrollY;
+  const [props, setProps] = useState({
+    name: "",
+    age: ""
+  })
+  const [isTrue, setIsTrue] = useState(false)
 
-      // Check if the hero component is scrolled into view
-      if (!showHero && scrollY >= windowHeight) {
-        setShowHero(true);
-      }
-
-      // Check if the bottom component is scrolled into view
-      if (!showBottom && scrollY >= windowHeight * 2) {
-        setShowBottom(true);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [showHero, showBottom]);
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <div className="top-0 z-10">
-        <Header />
-      </div>
-      <div className="flex flex-col flex-1 overflow-y-auto">
-        <div style={{ minHeight: '100vh' }}>
-          {showHero && <Hero />}
-        </div>
-        <div style={{ minHeight: '100vh' }}>
-          {showBottom && <Bottom />}
-        </div>
-      </div>
+    <div className="flex h-screen w-screen justify-center items-center flex-col space-y-2 text-2xl">
+      {!isTrue && <form className="flex flex-col space-y-3">
+        <input type="text"
+          placeholder="Name"
+          className="rounded-xl p-2 border"
+          value={props.name}
+          onChange={(e) => setProps({ ...props, name: e.target.value })}
+        />
+        <input
+          type="text"
+          placeholder="Age"
+          className="rounded-xl p-2 border"
+          value={props.age}
+          onChange={(e) => setProps({ ...props, age: e.target.value })} />
+        <button type="submit" className="rounded-md p-3 bg-sky-500 text-white" onClick={() => setIsTrue(true)}>Submit</button>
+      </form>}
+      {/* <button className="rounded-md p-3 bg-sky-500 text-white" onClick={() => window.location.href = "/file"}>Submit</button> */}
+      {isTrue && <Component props={props} />}
     </div>
-  );
-};
-
-export default Page;
+  )
+}

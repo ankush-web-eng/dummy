@@ -5,7 +5,13 @@ import { useState, useRef } from "react";
 import { FaPencilAlt } from "react-icons/fa";
 import { RiLoaderLine } from "react-icons/ri";
 
-export default function Page() {
+interface Props {
+  name? : string;
+  age? : string;
+}
+
+
+export default function Component({props}: {props : Props}) {
   const [file, setFile] = useState<File | null>(null);
   const [send, setSend] = useState<boolean>(false);
   const [response, setResponse] = useState<boolean>(false);
@@ -40,17 +46,14 @@ export default function Page() {
           width: img.width,
           height: img.height,
         });
-        if(img.height < 250 || img.width < 250 || img.width > 1080 || img.height > 1080){
+        if(img.height < 250 || img.width < 250 || img.width > 2096 || img.height > 2096){
           alert("Image is not within the required dimensions")
           return
         }
         setResponse(false);
         setSend(false);
       };
-      if (typeof e.target?.result === "string") {
-        img.src = e.target.result;
-        
-      }
+        img.src = e.target?.result as string
     };
     reader.readAsDataURL(selectedFile);
     setFile(selectedFile);
@@ -58,12 +61,15 @@ export default function Page() {
 
   return (
     <div className="h-screen w-screen flex flex-col justify-center items-center space-y-5">
+      <div className="font-semibold">
+          Hello {props.name}
+        </div>
       <div className="relative h-fit w-fit">
-        <div className="absolute -top-[25px] -right-[10px]">
+        <div className="absolute -top-0 -right-0">
           {response ? (
             <RiLoaderLine className="animate-spin text-sky-500" />
           ) : (
-            <FaPencilAlt className="h-10 w-10" onClick={handleClick} color="blue" />
+            <FaPencilAlt className="h-7 w-7" onClick={handleClick} color="blue" />
           )}
         </div>
         <div className="max-w-full max-h-full">
