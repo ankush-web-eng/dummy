@@ -1,23 +1,26 @@
 "use client";
 
+import axios from "axios";
 import Image from "next/image";
 import { useState, useRef } from "react";
+import { memo } from "react";
 import { FaPencilAlt } from "react-icons/fa";
 import { RiLoaderLine } from "react-icons/ri";
+import { useImageContext } from "@/context/imageContext";
 
 interface Props {
-  name? : string;
-  age? : string;
+  name?: string;
+  age?: string;
 }
 
-
-export default function Component({props}: {props : Props}) {
+function Component({ props }: { props: Props }) {
   const [file, setFile] = useState<File | null>(null);
   const [send, setSend] = useState<boolean>(false);
   const [response, setResponse] = useState<boolean>(false);
   const [imageSrc, setImageSrc] = useState<string | ArrayBuffer | null>(null);
   const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
   const imageRef = useRef<HTMLInputElement>(null);
+  const { setImage } = useImageContext();
 
   const handleClick = async () => {
     if (imageRef.current) {
@@ -32,9 +35,9 @@ export default function Component({props}: {props : Props}) {
     setResponse(true);
     setSend(true);
 
-    if (selectedFile?.size > 2 * 1048 * 1048 ){
-      alert("Image size is too large")
-      return
+    if (selectedFile.size > 2 * 1024 * 1024) {
+      alert("Image size is too large");
+      return;
     }
 
     const reader = new FileReader();
@@ -46,24 +49,25 @@ export default function Component({props}: {props : Props}) {
           width: img.width,
           height: img.height,
         });
-        if(img.height < 250 || img.width < 250 || img.width > 2096 || img.height > 2096){
-          alert("Image is not within the required dimensions")
-          return
+        if (img.height < 250 || img.width < 250 || img.width > 2096 || img.height > 2096) {
+          alert("Image is not within the required dimensions");
+          return;
         }
         setResponse(false);
         setSend(false);
       };
-        img.src = e.target?.result as string
+      img.src = e.target?.result as string;
     };
     reader.readAsDataURL(selectedFile);
     setFile(selectedFile);
+    setImage(selectedFile);
   };
 
   return (
     <div className="h-screen w-screen flex flex-col justify-center items-center space-y-5">
       <div className="font-semibold">
-          Hello {props.name}
-        </div>
+        Hello {props.name}
+      </div>
       <div className="relative h-fit w-fit">
         <div className="absolute -top-0 -right-0">
           {response ? (
@@ -93,9 +97,6 @@ export default function Component({props}: {props : Props}) {
         accept="image/*"
         onChange={handleFileChange}
       />
-      <button className="p-2 border bg-blue-500 rounded-full" onClick={handleClick}>
-        {send ? "Sending" : "Send"}
-      </button>
       {imageDimensions && (
         <div>
           <p>Width: {imageDimensions.width}px</p>
@@ -105,3 +106,5 @@ export default function Component({props}: {props : Props}) {
     </div>
   );
 }
+
+export default memo(Component);

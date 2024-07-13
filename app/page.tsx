@@ -1,7 +1,9 @@
 "use client"
 
+import Navbar from "@/components/nav"
+import dynamic from "next/dynamic"
 import { useState } from "react"
-import Component from "./file/file"
+const Component = dynamic(() => import("@/app/file/file"), { ssr: false })
 
 export default function Page() {
 
@@ -14,6 +16,7 @@ export default function Page() {
 
   return (
     <div className="flex h-screen w-screen justify-center items-center flex-col space-y-2 text-2xl">
+      <Navbar />
       {!isTrue && <form className="flex flex-col space-y-3">
         <input type="text"
           placeholder="Name"
